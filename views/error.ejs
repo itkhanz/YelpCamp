@@ -1,0 +1,12 @@
+<% layout('layouts/boilerplate') %> 
+<!-- FROM BOOTSTRAP ALERT DOCS -->
+<div class="row">
+  <div class="col-12 col-lg-6 offset-lg-3">
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading"><%= err.message %></h4>
+      <!-- FOR DEVELOPMENT PURPOSES -->
+      <p><%= err.stack %></p> 
+     </div>
+  </div>
+</div>
+
