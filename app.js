@@ -5,6 +5,9 @@ const ejsMate = require('ejs-mate');
 const path = require('path');
 const methodOverride = require('method-override');
 
+const session = require('express-session');
+const flash = require('connect-flash');
+
 const ExpressError = require('./utils/ExpressError');
 
 const campgrounds = require('./routes/campgrounds');
@@ -35,15 +38,44 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 
-// Campgrounds Middlware
+// Session Middleware
+const sessionConfig = {
+  secret: 'thisshouldbeabettersecret!',
+  resave: 'false',
+  saveUninitialized: 'true',
+  cookie: {
+    // Basic Security
+    httpOnly: true,
+    //have cookie expire after week
+    //Date.now() --> produces date in milliseconds
+    // Date.now() + milliseconds * seconds * minutes * hours * days
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  }
+};
+app.use(session(sessionConfig));
+
+// Flash middleware
+app.use(flash());
+// Every route has access to flash object
+// so no need to pass it manually in every route
+// unlike res.render('campgrounds/index', { campgrounds, messages: req.flash('success') })
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+});
+
+
+// Campgrounds Route Middlware
 app.use('/campgrounds', campgrounds);
-// Reviews Middlware
+// Reviews Route Middlware
 app.use('/campgrounds/:id/reviews', reviews);
+
 
 app.get('/', (req, res) => {
     res.render('home');
 });
-
 
 //BASIC ERROR HANDLERS
 app.all('*', (req, res, next) => {
