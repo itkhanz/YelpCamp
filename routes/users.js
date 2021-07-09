@@ -10,17 +10,18 @@ const users = require('../controllers/users');
 // ******* User Routes *******
 // *****************************
 
-// Render Form
-router.get('/register', users.renderRegister);
+router.route('/register')
+  // Render Form
+  .get(users.renderRegister)
+  //POST FORM
+  .post(catchAsync(users.register));
 
-//POST FORM
-router.post('/register', catchAsync(users.register));
+router.route('/login')
+  //RENDER LOGIN FORM
+  .get(users.renderLogin)
+  // POST LOGIN
+  .post(passport.authenticate('local', { failureFlash: true, failureRedirect: '/login'}), users.login);
 
-//RENDER LOGIN FORM
-router.get('/login', users.renderLogin);
-  
-// POST LOGIN
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login'}), users.login);
 
 //LOGOUT
 router.get('/logout', users.logout);

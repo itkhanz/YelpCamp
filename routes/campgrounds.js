@@ -14,22 +14,25 @@ const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 // **** Campground Routes ****
 // ****************************
 
-// Campgrounds index (lists all the campgrounds)
-router.get('/', catchAsync(campgrounds.index));
 
-//GET NEW Campground FORM
+router.route('/')
+  // Campgrounds index (lists all the campgrounds)
+  .get(catchAsync(campgrounds.index))
+  //POST NEW Campground
+ .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+
+//GET NEW Campground FORM --> needs to be before /:id
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
-//POST NEW Campground
-router.post('/', isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
 
-// campgrounds show (details page for a campground)
-router.get('/:id', catchAsync(campgrounds.showCampground));
+router.route('/:id')
+  // campgrounds show (details page for a campground)
+  .get(catchAsync(campgrounds.showCampground))
+  // UPDATE Campground
+  .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+  //DELETE Campground ROUTE
+  .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground));
 
-// update/edit campground
+// GET edit campground FORM
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditForm));
-router.put('/:id', isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground));
-
-//DELETE Campground ROUTE
-router.delete('/:id', isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground));
 
 module.exports = router;
