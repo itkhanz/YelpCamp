@@ -7,6 +7,7 @@ const { storage } = require('../cloudinary');
 const upload = multer({ storage });
 
 
+
 const Campground = require('../models/campground');
 
 const campgrounds = require('../controllers/campground');
@@ -24,16 +25,8 @@ const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 router.route('/')
   // Campgrounds index (lists all the campgrounds)
   .get(catchAsync(campgrounds.index))
-  .post(upload.array('campground[image]'), (req, res) => {
-    console.log('REQ.BODY...', req.body, 'REQ.FILES...', req.files);
-    res.send("IT WORKED!!")
-  });
-  // .post(upload.single('campground[image]'), (req, res) => {
-  //   console.log(req.body, req.file);
-  //   res.send("IT Worked!!");
-  // });
   // POST NEW Campground
-  // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+  .post(isLoggedIn, upload.array('campground[image]'), validateCampground, catchAsync(campgrounds.createCampground));
 
 
 //GET NEW Campground FORM --> needs to be before /:id
