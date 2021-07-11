@@ -18,7 +18,6 @@ module.exports.createCampground = async (req, res, next) => {
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.author = req.user._id;
     await campground.save();
-    // console.log(campground);
     req.flash('success', 'Successfully made a new Campground!');
     res.redirect(`campgrounds/${campground._id}`);
 };
@@ -30,7 +29,6 @@ module.exports.showCampground = async (req, res) => {
         path: 'author'    //populate review author
       }
     }).populate('author');
-    // console.log(campground);
     if(!campground){
       req.flash('error', 'Cannot find that campground');
       return res.redirect('/campgrounds');
@@ -49,7 +47,6 @@ module.exports.renderEditForm = async(req, res) => {
 
 module.exports.updateCampground = async (req, res)=> {
     const { id } = req.params;
-    // console.log(req.body);
     const campground= await Campground.findByIdAndUpdate(id, {...req.body.campground});
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     //spread array into push --> take data from array and pass into push
@@ -63,7 +60,6 @@ module.exports.updateCampground = async (req, res)=> {
       //COMPLICATED QUERY --> want to pull images where filename is in the req.body.deleteImages
       await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages }}}});
     };
-    // console.log(campground);
     req.flash('success', 'Successfully updated a new Campground!');
     res.redirect(`${campground._id}`);
 };

@@ -9,6 +9,7 @@ const ImageSchema = new Schema({
 });
 //use virtual because we do not need to store this information. We still need to request image url from database -- no need to store two
 //every time we call thumbnail we are going to do this little calculation --> very lightweight
+// https://mongoosejs.com/docs/tutorials/virtuals.html
 ImageSchema.virtual('thumbnail').get(function() {
     return this.url.replace('/upload', '/upload/w_200');
 });
