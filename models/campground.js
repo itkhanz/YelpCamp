@@ -13,6 +13,12 @@ const ImageSchema = new Schema({
 ImageSchema.virtual('thumbnail').get(function() {
     return this.url.replace('/upload', '/upload/w_200');
 });
+// c_crop Extracts the specified size from the original image without distorting or scaling the delivered asset.
+ImageSchema.virtual('cardImage').get(function() {   
+    return this.url.replace('/upload', '/upload/ar_4:3,c_crop'); 
+});
+
+
 
 const CampgroundSchema = new Schema ({
     title: String,

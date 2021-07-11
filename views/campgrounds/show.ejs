@@ -10,7 +10,7 @@
           <% campground.images.forEach((img, i) => { %>
           <!-- when index is 0, add class 'active' otherwise add nothing -->
             <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-              <img src="<%= img.url %>" class="d-block w-100" alt="">
+              <img src="<%= img.cardImage %>" class="d-block w-100" alt="">
             </div>
           <% }) %>
         </div>
