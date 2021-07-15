@@ -7,7 +7,13 @@
     <div class="card mb-3">
         <div class="row">
         <div class="col-md-4">
-            <img class="img-fluid" src="<%=campground.images[0].url%>" alt="campground image">
+            <!-- if anything in images array we will display first image -->
+            <% if (campground.images.length) { %>
+                <img class="img-fluid" src="<%=campground.images[0].url%>" alt="campground image">
+            <% } else { %>
+                <!-- show default -->
+                <img class="img-fluid" src="https://res.cloudinary.com/itkhan/image/upload/v1626012664/YelpCamp/khogn5l2pdup716opxak.jpg" alt="campground image">
+            <% } %> 
         </div>
         <div class="col-md-8">
             <div class="card-body">
