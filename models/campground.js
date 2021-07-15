@@ -20,34 +20,47 @@ ImageSchema.virtual('cardImage').get(function() {
 
 
 
+//INCLUDE VIRTUALS
+// By default, Mongoose does not include virtuals when you convert a document to JSON.
+const opts = { toJSON: { virtuals: true } };
+
+//CREATE SCHEMA
 const CampgroundSchema = new Schema ({
     title: String,
-    images: [ImageSchema],
-    price: Number,
-    description: String,
-    location: String,
-    geometry: {
-        type: {
-          type: String, 
-          enum: ['Point'], 
-          required: true
-        },
-        coordinates: {
-          type: [Number],
-          required: true
-        }
+  images: [ImageSchema],
+  geometry: {
+    type: {
+      type: String, 
+      enum: ['Point'], 
+      required: true
     },
-    author: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    reviews: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Review'
-        }
-    ]
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  },
+  price: Number,
+  description: String,
+  location: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Review'
+    }
+  ]
+}, opts);
+
+//FOR MAPBOX POPUP --> NESTED
+CampgroundSchema.virtual('properties.popUpMarkup').get(function() {
+    return `
+    <strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>
+    <p>${this.description.substring(0, 20)}...</p>`;
 });
+  
 
 //DELETE MIDDLEWARE
 CampgroundSchema.post('findOneAndDelete', async function (doc) {

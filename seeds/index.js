@@ -22,7 +22,7 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 const seedDB = async () => {
     await Campground.deleteMany({});
     //CREATE LOOP FOR DATA - 50 times - 50 cities
-    for(let i = 0; i < 50; i++){
+    for(let i = 0; i < 300; i++){
         //random number for price
         const price = Math.floor(Math.random() * 20) + 10;
         //random number to pick city[from 1000 city array]
@@ -38,7 +38,10 @@ const seedDB = async () => {
             // Hard coded coordinates
             geometry : { 
                 type: "Point", 
-                coordinates: [ -111.3683, 45.2847 ] 
+                coordinates: [
+                    cities[random1000].longitude,
+                    cities[random1000].latitude
+                ]
             },
             images: [
                 {
