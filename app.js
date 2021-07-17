@@ -3,6 +3,7 @@ if(process.env.NODE_ENV !== "production") {
 };
 
 const express = require('express');
+
 const mongoose = require('mongoose');
 
 const ejsMate = require('ejs-mate');
@@ -22,6 +23,11 @@ const ExpressError = require('./utils/ExpressError');
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
+
+//mongo sanitize
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
   useNewUrlParser: true,
@@ -47,18 +53,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Mongoose Middleware
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
+// MONGO SANITIZE Middleware
+app.use(mongoSanitize({
+  replaceWith: '_'
+}));
 
 // Session Middleware
 const sessionConfig = {
+  name: 'session',  //defaut name for the cookie is connect.sid
   secret: 'thisshouldbeabettersecret!',
   resave: 'false',
   saveUninitialized: 'true',
   cookie: {
     // Basic Security
     httpOnly: true,
+    // secure: true,
     //have cookie expire after week
-    //Date.now() --> produces date in milliseconds
-    // Date.now() + milliseconds * seconds * minutes * hours * days
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7
   }
@@ -67,6 +77,61 @@ app.use(session(sessionConfig));
 
 // Flash middleware
 app.use(flash());
+
+
+// Helmet Middleware
+app.use(helmet());
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: false,
+//   })
+// );
+const scriptSrcUrls = [
+  "https://stackpath.bootstrapcdn.com/",
+  "https://api.tiles.mapbox.com/",
+  "https://api.mapbox.com/",
+  "https://kit.fontawesome.com/",
+  "https://cdnjs.cloudflare.com/",
+  "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+  "https://kit-free.fontawesome.com/",
+  "https://stackpath.bootstrapcdn.com/",
+  "https://api.mapbox.com/",
+  "https://api.tiles.mapbox.com/",
+  "https://fonts.googleapis.com/",
+  "https://use.fontawesome.com/",
+  "https://cdn.jsdelivr.net",
+];
+const connectSrcUrls = [
+  "https://api.mapbox.com/",
+  "https://a.tiles.mapbox.com/",
+  "https://b.tiles.mapbox.com/",
+  "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+app.use(
+  helmet.contentSecurityPolicy({
+      directives: {
+          defaultSrc: [],
+          connectSrc: ["'self'", ...connectSrcUrls],
+          scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+          styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+          workerSrc: ["'self'", "blob:"],
+          objectSrc: [],
+          imgSrc: [
+              "'self'",
+              "blob:",
+              "data:",
+              "https://res.cloudinary.com/itkhan/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+              "https://images.unsplash.com/",
+          ],
+          fontSrc: ["'self'", ...fontSrcUrls],
+      },
+  })
+);
+
+
 
 // Passport Middleware
 app.use(passport.initialize());
@@ -77,17 +142,14 @@ passport.deserializeUser(User.deserializeUser()); //Take out of session
 
 
 // Every route has access to flash object
-// so no need to pass it manually in every route
-// unlike res.render('campgrounds/index', { campgrounds, messages: req.flash('success') })
 app.use((req, res, next) => {
-  //Every Request has access now
   //if you are not coming from these two routes..., if req.originalUrl does not include one of these then..
   //otherwise it will redirect back to login page if we click again login
   // redirecting to home page also is not sensible so we redirect to campgrounds
   if(!['/login', '/'].includes(req.originalUrl)) {
     req.session.returnTo = req.originalUrl ;
   }
-  // console.log("req.session....", req.session);
+  // console.log(req.query);
   res.locals.currentUser = req.user; 
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
