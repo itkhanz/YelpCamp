@@ -1,2 +1,5 @@
 # YelpCamp
-A full-stack campground application developed using Express JS, MongoDB, and EJS.
+A full-stack web application developed using Express JS, MongoDB, and EJS. 
+
+## Live on Heroku:
+https://yelpcamp-itkhan-2021.herokuapp.com/
