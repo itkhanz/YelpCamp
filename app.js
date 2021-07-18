@@ -28,8 +28,15 @@ const reviewRoutes = require('./routes/reviews');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 
+// connect-mongo session store
+const MongoStore = require('connect-mongo');
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+
+// const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+// const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useCreateIndex: true, 
   useUnifiedTopology: true,  
@@ -50,20 +57,39 @@ app.set('views', path.join(__dirname, 'views'))
 
 //PUBLIC MIDDLEWARE
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 // Mongoose Middleware
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
+
 // MONGO SANITIZE Middleware
 app.use(mongoSanitize({
   replaceWith: '_'
 }));
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
+// Mongo Session Store
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+      secret
+  }
+});
+store.on("error", function(e) {
+  console.log("SESSION STORE ERROR", e)
+});
+
+
 // Session Middleware
 const sessionConfig = {
+  store,
   name: 'session',  //defaut name for the cookie is connect.sid
-  secret: 'thisshouldbeabettersecret!',
-  resave: 'false',
-  saveUninitialized: 'true',
+  secret,
+  resave: 'false', //don't save session if unmodified
+  saveUninitialized: 'true',   // don't create session until something stored
   cookie: {
     // Basic Security
     httpOnly: true,
