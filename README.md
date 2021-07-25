@@ -1,5 +1,5 @@
 <!-- Add banner here -->
-![](./demo/images/YelpCamp-Preview.png)
+![YelpCamp Banner](./demo/images/YelpCamp-Preview.png)
 
 
 # YelpCamp
@@ -24,7 +24,7 @@ https://yelpcamp-itkhan-2021.herokuapp.com/
 - [Development](#development)
 - [Contribute](#contribute)
     - [Contributuions](#contributions)
-    - [Adding new features or fixing bugs](#adding-new-features-or-fixing-bugs)
+    - [Credits](#credits)
 - [License](#license)
 
 # Installation
@@ -80,7 +80,7 @@ https://yelpcamp-itkhan-2021.herokuapp.com/
 
 ### ER Diagram for YelpCamp database
 
-![](./demo/images/YelpCamp-ERDiagram.jpg)
+![YelpCamp datbase ER diagram](https://raw.githubusercontent.com/itkhanz/YelpCamp/main/demo/images/YelpCamp-ERDiagram.JPG)
 
 # Development
 [(Back to top)](#table-of-contents)
