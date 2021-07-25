@@ -8,8 +8,8 @@
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Ibtisam Khan",
+  "license": "MIT",
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.13.0",
     "cloudinary": "^1.26.2",
