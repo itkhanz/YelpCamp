@@ -6,7 +6,7 @@ module.exports.renderRegister = (req, res) => {
 };
 
 
-module.exports.register = async (req, res) => {
+module.exports.register = async (req, res, next) => {
     try {
       //destructure what we want from req.body
       const { email, username, password } = req.body; 
@@ -28,7 +28,7 @@ module.exports.renderLogin = (req, res) => {
     res.render('users/login');
 };
 
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res, next) => {
     req.flash('success', 'welcome back!');
     const redirectURL = req.session.returnTo || '/campgrounds';
     delete req.session.returnTo;    // We don't want returnTo to stay in session so after you redirect user:

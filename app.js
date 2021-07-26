@@ -182,12 +182,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// New User Registration
-app.get('/fakeUser', async(req, res) => {
-  const user = new User({email: 'itkhanz@gmail.com', username: 'itkhan'});
-  const newUser = await User.register(user, 'hello');
-  res.send(newUser);
-});
 
 // User Route Middleware
 app.use('/', userRoutes)
